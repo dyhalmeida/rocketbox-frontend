@@ -45,6 +45,18 @@ export const Header = styled.header`
 
 `;
 
+export const Upload = styled.div`
+  
+  border-radius: 4px;
+  padding: 30px;
+  text-align: center;
+  border: 1px dashed #ddd;
+  color: #999;
+  margin-top: 50px;
+  cursor: pointer;
+
+`;
+
 export const FileInfo = styled.a`
   
   display: flex;
@@ -57,5 +69,5 @@ export const FileInfo = styled.a`
     margin-left: 10px;
     color: #333;
   }
-  
+
 `;

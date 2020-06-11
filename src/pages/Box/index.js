@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BoxContainer, Header, FileInfo } from './styled.js';
+import { BoxContainer, Header, FileInfo, Upload } from './styled.js';
 import logo from '../../assets/logo.svg';
 import { MdInsertDriveFile } from 'react-icons/md';
+
+import Dropzone from 'react-dropzone';
 
 import api from '../services/api';
 import { formatDistance, parseISO } from 'date-fns';
@@ -21,6 +23,17 @@ function Box() {
   }, [id])
 
 
+  const handleUpload = (files) => {
+
+    files.forEach(file => {
+      const data = new FormData();
+      data.append('file', file);
+      api.post(`boxes/${id}/files`, data);
+    });
+
+  }
+
+
 
   return (
     <BoxContainer>
@@ -28,6 +41,17 @@ function Box() {
         <img src={logo} alt="Rocketbox"/>
         <h1>{box.title}</h1>
       </Header>
+
+      <Dropzone onDropAccepted={handleUpload}>
+        {({getRootProps, getInputProps}) => (
+
+          <Upload {...getRootProps()}>
+            <input {...getInputProps()}/>
+            <p>Arraste arquivos ou clique aqui</p>
+          </Upload>
+
+        )}
+      </Dropzone>
 
       <ul>
         { box.files && box.files.map(file => (
