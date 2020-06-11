@@ -1,27 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BoxContainer, Header, FileInfo, Upload } from './styled.js';
-import logo from '../../assets/logo.svg';
 import { MdInsertDriveFile } from 'react-icons/md';
-
 import Dropzone from 'react-dropzone';
 
+import { BoxContainer, Header, FileInfo, Upload } from './styled.js';
+import logo from '../../assets/logo.svg';
+
+import socket from 'socket.io-client';
 import api from '../services/api';
+
 import { formatDistance, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt'
 
-function Box() {
+const Box = () => {
 
   const { id } = useParams();
   const [box, setBox] = useState({});
   
   useEffect(() => { 
+    api.get(`boxes/${id}`).then(response => setBox(response.data));
+  }, [])
 
-    api.get(`boxes/${id}`)
-    .then(response => setBox(response.data));
+  useEffect(() => {
+    subscribeEventNewFiles();
+  }, [])
 
-  }, [id])
+  const subscribeEventNewFiles = () => {
 
+    const io = socket('http://localhost:3333');
+
+    io.emit('connectRoom', id);
+
+    io.on('file', data => {
+      setBox(box => ({
+        ...box, files: [data, ...box.files]
+      }));
+    });
+
+  }
 
   const handleUpload = (files) => {
 
@@ -32,8 +48,6 @@ function Box() {
     });
 
   }
-
-
 
   return (
     <BoxContainer>
